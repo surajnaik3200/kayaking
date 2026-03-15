@@ -1,6 +1,6 @@
-﻿
-
+﻿    <a href="management.php" style="position:fixed;bottom:24px;right:24px;font-size:2.5rem;text-decoration:none;z-index:1000;box-shadow:0 2px 8px #aaa;background:#fff;border-radius:50%;padding:12px;">🛟</a>
 <?php
+require_once 'db.php';
 $page = "contact";
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     header("Location: contact.php");
@@ -26,41 +26,17 @@ if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
 $success = false;
 // Save to DB and optionally email
 if (!$errors) {
-    try {
-        $pdo = new PDO(
-            'mysql:host=localhost;dbname=pxkayaking;charset=utf8mb4',
-            'px_user',
-            'CHANGE_ME_PASSWORD',
-            [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            ]
-        );
-
-        $stmt = $pdo->prepare("""
-            INSERT INTO inquiries (name, email, phone, trip_date, time_start, time_end, message, experience_id)
-            VALUES (:name, :email, :phone, :trip_date, :time_start, :time_end, :message, :experience_id)
-        """);
-        $stmt->execute([
-            ":name" => $name,
-            ":email" => $email,
-            ":phone" => $phone,
-            ":trip_date" => $date,
-            ":time_start" => $timeStart,
-            ":time_end" => $timeEnd,
-            ":message" => $message,
-            ":experience_id" => $experienceId,
-        ]);
-
+    $stmt = mysqli_prepare($conn, "INSERT INTO inquiries (name, email, phone, trip_date, time_start, time_end, message, experience_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    mysqli_stmt_bind_param($stmt, "ssssssss", $name, $email, $phone, $date, $timeStart, $timeEnd, $message, $experienceId);
+    if (mysqli_stmt_execute($stmt)) {
         $to = "bookings@pxkayaking.com"; // replace with your mailbox
         $subject = "New booking inquiry - PX Kayaking";
         $body = "Name: $name\nEmail: $email\nPhone: $phone\nDate: $date\nTime: $timeStart to $timeEnd\nMessage: $message";
         $headers = "From: no-reply@pxkayaking.com" . "\r\n" . "Reply-To: " . $email;
         @mail($to, $subject, $body, $headers);
-
         $success = true;
-    } catch (Throwable $e) {
-        $errors[] = "Could not save your request right now. Please call +91 9822277190 / 9822156672.";
+    } else {
+        $errors[] = "Database error: " . mysqli_error($conn);
     }
 }
 ?>
@@ -81,3 +57,15 @@ if (!$errors) {
                 <a href="about.php">About</a>
                 <a href="experience.php">Experiences</a>
                 <a class="cta" href="contact.php">Book Now</a>
+        </div>
+    </nav>
+
+    <main>
+        <?php if ($success): ?>
+            <div style="margin: 40px auto; max-width: 400px; background: #fff; border: 1px solid #27ae60; border-radius: 8px; padding: 32px; text-align: center; box-shadow: 0 2px 8px #ccc;">
+                <h2 style="color: #27ae60; margin-bottom: 16px; font-weight: bold;">Thank you!</h2>
+                <p style="color: #222; font-size: 1.1em; margin-bottom: 24px;">Your booking request has been received.<br>We will respond to you shortly.</p>
+                <a href="index.php" style="display: inline-block; margin-top: 0; padding: 12px 32px; background: #27ae60; color: #fff; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 1.1em; box-shadow: 0 2px 4px #aaa;">Back to Home</a>
+            </div>
+        <?php endif; ?>
+    </main>

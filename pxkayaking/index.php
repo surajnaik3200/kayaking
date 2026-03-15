@@ -11,7 +11,10 @@
 <body>
     <nav class="nav">
         <div class="nav-inner">
-            <div class="brand">PX Kayaking</div>
+            <div class="brand">
+                <img src="hero2/px kayaking logo.jpeg" alt="PX Kayaking Logo" style="height:40px; vertical-align:middle; margin-right:10px; border-radius:6px;">
+                PX Kayaking
+            </div>
             <div class="nav-links">
                 <a class="<?php echo $page === 'home' ? 'active' : ''; ?>" href="index.php">Home</a>
                 <a href="about.php">About</a>
@@ -35,10 +38,21 @@
         </div>
         <div class="hero-visual">
             <div class="hero-slider">
-                <div class="slide slide-1"></div>
-                <div class="slide slide-2"></div>
-                <div class="slide slide-3"></div>
+                <img class="slide" src="hero2/k1.png" alt="Kayaking 1" style="display:block; width:100%; border-radius:16px; position:absolute; top:0; left:0; transition:opacity 1s; opacity:1;">
+                <img class="slide" src="hero2/k2.png" alt="Kayaking 2" style="display:none; width:100%; border-radius:16px; position:absolute; top:0; left:0; transition:opacity 1s; opacity:0;">
+                <img class="slide" src="hero2/k3.jpeg" alt="Kayaking 3" style="display:none; width:100%; border-radius:16px; position:absolute; top:0; left:0; transition:opacity 1s; opacity:0;">
             </div>
+            <script>
+                const slides = document.querySelectorAll('.hero-slider .slide');
+                let current = 0;
+                setInterval(() => {
+                    slides[current].style.opacity = 0;
+                    slides[current].style.display = 'none';
+                    current = (current + 1) % slides.length;
+                    slides[current].style.display = 'block';
+                    slides[current].style.opacity = 1;
+                }, 3000);
+            </script>
         </div>
     </section>
 
@@ -85,4 +99,5 @@
         (c) <?php echo date('Y'); ?> PX Kayaking -- Canaguinim, South Goa
     </footer>
 </body>
+    <a href="management.php" style="position:fixed;bottom:24px;right:24px;font-size:2.5rem;text-decoration:none;z-index:1000;box-shadow:0 2px 8px #aaa;background:#fff;border-radius:50%;padding:12px;">🛟</a>
 </html>
