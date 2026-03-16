@@ -5,18 +5,26 @@ require_once 'db.php';
 // Handle login
 if (!isset($_SESSION['logged_in_user'])) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $username = $_POST['username'] ?? '';
-        $password = $_POST['password'] ?? '';
-        $stmt = mysqli_prepare($conn, "SELECT * FROM users WHERE username = ? LIMIT 1");
-        mysqli_stmt_bind_param($stmt, "s", $username);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-        $user = mysqli_fetch_assoc($result);
-        if ($user && $user['password'] === $password) {
-            $_SESSION['logged_in_user'] = $username;
-            header('Location: management.php');
-            exit;
+        $username = trim($_POST['username'] ?? '');
+        $password = trim($_POST['password'] ?? '');
+
+        if ($username === '' || $password === '') {
+            $error = 'Please enter username and password.';
         } else {
+            $stmt = mysqli_prepare($conn, "SELECT * FROM users WHERE username = ? LIMIT 1");
+            if ($stmt) {
+                mysqli_stmt_bind_param($stmt, "s", $username);
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
+                if ($result) {
+                    $user = mysqli_fetch_assoc($result);
+                    if ($user && $user['password'] === $password) {
+                        $_SESSION['logged_in_user'] = $username;
+                        header('Location: management.php');
+                        exit;
+                    }
+                }
+            }
             $error = 'Invalid username or password.';
         }
     }
@@ -60,7 +68,7 @@ if (!isset($_SESSION['logged_in_user'])) {
             $bookings[] = $row;
         }
     } else {
-        $error = 'Could not load bookings.';
+        $error = 'Could not load bookings from database: ' . mysqli_error($conn);
     }
 ?>
 <!DOCTYPE html>
