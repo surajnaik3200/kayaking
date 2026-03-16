@@ -1,5 +1,5 @@
 <?php
-$conn = mysqli_connect("localhost", "root", "", "pxkayaking");
+$conn = mysqli_connect("localhost", "root", "", "kayaking");
 if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }

@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS pxkayaking CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE pxkayaking;
+CREATE DATABASE IF NOT EXISTS kayaking CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE kayaking;
 
 CREATE TABLE IF NOT EXISTS inquiries (
     id INT AUTO_INCREMENT PRIMARY KEY,
