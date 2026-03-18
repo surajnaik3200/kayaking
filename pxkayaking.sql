@@ -22,3 +22,18 @@ CREATE TABLE IF NOT EXISTS users (
 
 INSERT INTO users (username, password) VALUES ('pxkayaking', '1234')
     ON DUPLICATE KEY UPDATE password='1234';
+
+-- Optional: keep a canonical list of experiences to use in the site.
+CREATE TABLE IF NOT EXISTS experiences (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    tag VARCHAR(100) DEFAULT NULL,
+    description TEXT DEFAULT NULL
+);
+
+INSERT INTO experiences (id, title, tag, description) VALUES
+    (1, 'Sunrise Creek Drift', '90 mins', 'Soft light over the Canaguinim creek, quiet waters, and bird calls — perfect for first-timers and photo lovers.'),
+    (2, 'Calm Backwater Trail', '1.5 hours', 'Glide across Canaguinim’s shaded backwaters and learn how this estuary thrives away from the open sea.'),
+    (3, 'Twilight Glow Paddle', '75 mins', 'Chase West Coast sunsets and pastel skies into dusk, ending with chai by the village jetty.'),
+    (4, 'Sea Kayaking (weather dependent)', '2 hours', 'Sea sessions when the coast is calm — we confirm the launch by phone or WhatsApp before you head out.')
+ON DUPLICATE KEY UPDATE title=VALUES(title), tag=VALUES(tag), description=VALUES(description);
