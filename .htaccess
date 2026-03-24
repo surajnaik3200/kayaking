@@ -1,0 +1,10 @@
+RewriteEngine On
+
+# 1. Redirect browser from about.php to /about (Cleanup old links)
+RewriteCond %{THE_REQUEST} /([^.]+)\.php [NC]
+RewriteRule ^ /%1 [L,R=301]
+
+# 2. Internally map /about back to about.php so the server can find it
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php [L]
